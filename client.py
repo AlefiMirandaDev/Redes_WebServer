@@ -1,25 +1,35 @@
 #Cliente envia o nome da pagina que ele quer e o servidor devolve o arquivo com um diretorio
 
-import socket
+import socket, threading, time, random
 import webbrowser
 
 host = '10.99.119.246'
 port = 13500
 
-cliente = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-cliente.connect((host,port))
-
 print('\t\tCliente Teste')
 
-name_page = ''
+def connect(i):
+    cliente = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    cliente.connect((host,port))
 
-while(name_page != 'exit'):
-       
     name_page = input('Name Page: ')
-    cliente.sendto(name_page.encode('utf-8'),(host,port))
+
+    time.sleep(random.randint(11,20))
+
+    cliente.send(name_page.encode('utf-8'))
     
-    
+    Mod_NP = cliente.recv(2048).decode('utf-8')
+    print(f'{Mod_NP}')
+
+    time.sleep(random.randint(1,10))
+
     cliente.close()
 
-    # url_resp =  
-    # webbrowser.open_new_tab(url_resp)
+def main():
+    for i in range(1,11):
+        client_th = threading.Thread(target=connect, args=[i])
+        client_th.start()
+        time.sleep(random.randint(1,10))
+
+if __name__ == '__main__':
+    main()
